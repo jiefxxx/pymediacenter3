@@ -63,8 +63,8 @@ class HListView(QListView):
         self.poster_height = 375
         self.poster_width = 250
         if wrapping:
-            self.poster_height = 467
-            self.poster_width = 306
+            self.poster_height = 450
+            self.poster_width = 300
         self.line = line
         self.setViewMode(QListView.IconMode)
         self.setFlow(QListView.LeftToRight)
@@ -81,9 +81,8 @@ class HListView(QListView):
         self.setMinimumHeight(self.poster_height + (30*self.line) + 8)
 
     def wheelEvent(self, event):
-        print(event.angleDelta().x())
         if event.angleDelta().x() == 0:
-            print(event)
+            event.ignore()
         else:
             return QListView.wheelEvent(self, event)
 
