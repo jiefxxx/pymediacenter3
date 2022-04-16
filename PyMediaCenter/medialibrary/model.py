@@ -15,7 +15,7 @@ from PyMediaCenter.model import ModelTableListDict
 class PixmapManager:
     def __init__(self, base_path, server):
         self.server = server
-        self.base_path = "/home/jief/rsc/400"
+        self.base_path = base_path
         rect = QApplication.desktop().screenGeometry()
         self.pixmap404 = QPixmap(":/rsc/404.jpg").scaledToWidth(400, mode=Qt.SmoothTransformation)
 

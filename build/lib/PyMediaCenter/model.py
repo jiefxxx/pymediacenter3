@@ -33,6 +33,8 @@ class ModelTableListDict(QAbstractTableModel):
                 return QVariant(self.get_key(section, role=DISPLAY_KEY))
             except IndexError as e:
                 print("headerData:", e, section)
+            except KeyError as e:
+                print("KeyError:", e, section)
 
         return QAbstractTableModel.headerData(self, section, orientation, role)
 
@@ -46,7 +48,7 @@ class ModelTableListDict(QAbstractTableModel):
                 if key:
                     before = self.get_key(index.column(), role=BEFORE_KEY)
                     if before:
-                        return QVariant(before(self.list[index.row()][key]))
+                        return QVariant(before(self.list[index.row()], key))
                     else:
                         return QVariant(self.list[index.row()][key])
 

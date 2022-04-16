@@ -26,10 +26,10 @@ class BottomControllers(QFrame):
         self.setLayout(self.hbox)
         self.visible = True
 
-        self.button_play = QIconButton([":/rsc/play_white.png", ":/rsc/play_black.png"], self, width=1000)
+        self.button_play = QIconButton(self, ":/rsc/play_white.png", ":/rsc/play_black.png", None)
         self.hbox.addWidget(self.button_play)
 
-        self.button_previous = QIconButton([":/rsc/previous_white.png", ":/rsc/previous_black.png"], self, width=1000)
+        self.button_previous = QIconButton(self, ":/rsc/previous_white.png", ":/rsc/previous_black.png", None)
         self.hbox.addWidget(self.button_previous)
 
         self.label_position_time = QLabel("--:--:--", self)
@@ -45,16 +45,16 @@ class BottomControllers(QFrame):
         self.label_remaining_time = QLabel("--:--:--", self)
         self.hbox.addWidget(self.label_remaining_time)
 
-        self.button_next = QIconButton([":/rsc/next_white.png", ":/rsc/next_black.png"], self, width=1000)
+        self.button_next = QIconButton(self, ":/rsc/next_white.png", ":/rsc/next_black.png", None)
         self.hbox.addWidget(self.button_next)
 
-        self.button_language = QIconButton([":/rsc/language_white.png", ":/rsc/language_black.png"], self, width=1000)
+        self.button_language = QIconButton(self, ":/rsc/language_white.png", ":/rsc/language_black.png", None)
         self.hbox.addWidget(self.button_language)
 
-        self.button_aspect = QIconButton([":/rsc/aspect_white.png", ":/rsc/aspect_black.png"], self, width=1000)
+        self.button_aspect = QIconButton(self, ":/rsc/aspect_white.png", ":/rsc/aspect_black.png", None)
         self.hbox.addWidget(self.button_aspect)
 
-        self.button_fs = QIconButton([":/rsc/fullscreen_white.png", ":/rsc/fullscreen_black.png"], self, width=1000)
+        self.button_fs = QIconButton(self, ":/rsc/fullscreen_white.png", ":/rsc/fullscreen_black.png", None)
         self.hbox.addWidget(self.button_fs)
 
         self.setFocusPolicy(Qt.NoFocus)
@@ -84,14 +84,14 @@ class TopControllers(QFrame):
         QFrame.__init__(self, parent)
         self.hbox = QHBoxLayout()
         self.setLayout(self.hbox)
-        self.button_menu = QIconButton([":/rsc/menu_white.png", ":/rsc/menu_black.png"], self, width=1000)
+        self.button_menu = QIconButton(self, ":/rsc/menu_white.png", ":/rsc/menu_black.png", None)
         self.hbox.addWidget(self.button_menu)
         self.label_name = QLabel("----", self)
         self.hbox.addWidget(self.label_name)
         self.hbox.addStretch()
         self.label_time = QLabel("--:--", self)
         self.hbox.addWidget(self.label_time)
-        self.button_close = QIconButton([":/rsc/close_white.png", ":/rsc/close_black.png"], self, width=1000)
+        self.button_close = QIconButton(self, ":/rsc/close_white.png", ":/rsc/close_black.png", None)
         self.hbox.addWidget(self.button_close)
 
         self.timer = QTimer(self)
@@ -102,15 +102,7 @@ class TopControllers(QFrame):
         self.update_time()
 
     def update_media(self, media):
-        title = ""
-        if media["MediaType"] == MEDIA_TYPE_MOVIE:
-            title = "%s - %s" % (media["Title"], media["ReleaseDate"][:4])
-        elif media["MediaType"] == MEDIA_TYPE_TV:
-            title = "%s - S%02dE%02d - %s" % (media["Title"],
-                                              media["SeasonNumber"],
-                                              media["EpisodeNumber"],
-                                              media["EpisodeTitle"])
-        self.label_name.setText(title)
+        self.label_name.setText(media)
 
     def update_time(self):
         time = datetime.datetime.now()

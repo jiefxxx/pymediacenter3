@@ -11,11 +11,17 @@ PyMediaCenter/mediaPlayer/controller.py
 PyMediaCenter/mediaPlayer/layout.py
 PyMediaCenter/mediaPlayer/player.py
 PyMediaCenter/medialibrary/__init__.py
+PyMediaCenter/medialibrary/home.py
 PyMediaCenter/medialibrary/layout.py
 PyMediaCenter/medialibrary/mediaList.py
 PyMediaCenter/medialibrary/mediaView.py
 PyMediaCenter/medialibrary/model.py
+PyMediaCenter/medialibrary/movie.py
 PyMediaCenter/medialibrary/navWidget.py
+PyMediaCenter/medialibrary/person.py
+PyMediaCenter/medialibrary/search.py
+PyMediaCenter/medialibrary/tv.py
+PyMediaCenter/medialibrary/video.py
 PyMediaCenter/pyconfig/__init__.py
 PyMediaCenter/pyconfig/exception.py
 PyMediaCenter/pythread/__init__.py

@@ -1,10 +1,7 @@
 import requests
-
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from PyMediaCenter import pythread
-
-from PyMediaCenter.medialibrary import MEDIA_TYPE_MOVIE, MEDIA_TYPE_TV
 
 
 def url_param(kwargs):
@@ -39,20 +36,26 @@ class Server(QObject):
     task = pyqtSignal('PyQt_PyObject')
     fatal_error = pyqtSignal('PyQt_PyObject')
 
-    def __init__(self, address, port=4242):
+    def __init__(self, address, port=3000):
         QObject.__init__(self)
 
         self.address, self.port = address, port
         self.session = requests.Session()
+        self.connect("jief", "...")
 
     def _server_address(self):
         return "http://" + self.address + ":" + str(self.port)
+
+    def connect(self, user, password):
+        self.post("/connect", json={"login": user, "password": password})
 
     def get(self, path, **kwargs):
         try:
             response = self.session.get(self._server_address() + path, **kwargs)
             if response.status_code == 200:
                 return response
+            elif response.status_code == 404:
+                return None
             else:
                 self.fatal_error.emit(self._server_address() + " get " + path + " --> " + str(response.status_code))
         except requests.exceptions.ConnectionError:
@@ -64,7 +67,22 @@ class Server(QObject):
             if response.status_code == 200:
                 return True
             else:
-                self.fatal_error.emit(self._server_address() + " get " + path + " --> " + str(response.status_code))
+                self.fatal_error.emit(self._server_address() + " post" + path + " --> " + str(response.status_code))
+                return False
+        except requests.exceptions.ConnectionError:
+            self.fatal_error.emit(self._server_address() + " not connected")
+            return False
+
+        except requests.exceptions.Timeout:
+            return None
+
+    def put(self, path, **kwargs):
+        try:
+            response = self.session.put(self._server_address() + path, timeout=20, **kwargs)
+            if response.status_code == 200:
+                return True
+            else:
+                self.fatal_error.emit(self._server_address() + " post" + path + " --> " + str(response.status_code))
                 return False
         except requests.exceptions.ConnectionError:
             self.fatal_error.emit(self._server_address() + " not connected")
@@ -79,86 +97,65 @@ class Server(QObject):
             json = raw.json()
             if json:
                 return json
-        return []
+        return None
 
-    def get_stream_path(self, video):
-        return self._server_address() + "/stream/" + str(video["VideoID"])
+    def get_stream_path(self):
+        return self._server_address() + "/mediaserver/stream"
 
     @pythread.threaded("httpCom")
     def update_last_time(self, video_id, last_time):
-        self.post("/media/edit", json={"Timestamp": [{"VideoID": video_id,
-                                                      "Timestamp": last_time}]})
+        self.post(f"/api/video/{video_id}", json={"current_time": last_time})
 
-    def get_medias(self, kwargs):
-        for el in self.get_json("/media" + url_param(kwargs)):
+    def get_movies(self):
+        for el in self.get_json("/mediaserver/api/movie"):
             yield el
 
-    def get_videos(self, kwargs):
-        print(kwargs, self.get_json("/video" + url_param(kwargs)))
-        for el in self.get_json("/video" + url_param(kwargs)):
+    def get_tvs(self):
+        for el in self.get_json("/mediaserver/api/tv"):
             yield el
 
-    def get_poster(self, poster_path, storage_path):
-        response = requests.get(self._server_address() + "/poster/500" + poster_path, stream=True)
+    def get_persons(self):
+        for el in self.get_json("/mediaserver/api/person"):
+            yield el
+
+    def get_movie(self, movie_id):
+        return self.get_json(f"/mediaserver/api/movie/{movie_id}")
+
+    def get_tv(self, tv_id):
+        return self.get_json(f"/mediaserver/api/tv/{tv_id}")
+
+    def get_season(self, tv_id, season):
+        return self.get_json(f"/mediaserver/api/tv/{tv_id}/season/{season}")
+
+    def get_episode(self, tv_id, season=None, episode=None):
+        if season is None or episode is None:
+            return self.get_json(f"/mediaserver/api/tv?episode_id={tv_id}")
+        return self.get_json(f"/mediaserver/api/tv/{tv_id}/season/{season}/episode/{episode}")
+
+    def get_person(self, person_id):
+        return  self.get_json(f"/mediaserver/api/person/{person_id}")
+
+    def get_video(self, video_id):
+        return self.get_json(f"/mediaserver/api/video/{video_id}")
+
+    def get_videos(self, media_type, media_id):
+        return self.get_json(f"/mediaserver/api/video?media_type={media_type};media_id={media_id}")
+
+    def get_special(self, media_type, data_type):
+        return self.get_json(f"/mediaserver/api/{media_type}/{data_type}")
+
+    def store_rsc(self, path, storage_path):
+        response = requests.get(self._server_address() + f"/mediaserver/rsc/original/{path}", stream=True)
         if response.status_code == 200:
             with open(storage_path, 'wb') as f:
                 for chunk in response:
                     f.write(chunk)
 
-    def get_backdrop(self, backdrop_path):
-        response = requests.get(self._server_address() + "/backdrop" + backdrop_path)
+    def get_rsc(self, path):
+        response = requests.get(self._server_address() + f"/mediaserver/rsc/original/{path}")
         if response.status_code == 200:
             return response.content
         return None
 
-    def set_timestamp(self, video_id, timestamp):
-        self.post("/media/edit", json={"Timestamp": [{"VideoID": video_id,
-                                                      "Timestamp": timestamp}]})
-
-    def get_videos_info(self, video_id, columns):
-        videos = list(self.get_videos({"columns": columns,
-                                     "VideoID": video_id}))
-        if len(videos) == 0:
-            return None
-        videos[0]["Filename"] = self._server_address()+"/stream/"+str(videos[0]["VideoID"])
-        return videos[0]
-
-    def get_movie_videos(self, media_id):
-        return list(self.get_videos({"columns": ["VideoID", "Duration", "Path", "Size", "Timestamp", "Audios", "Subtitles"],
-                                         "VideoMediaID": media_id,
-                                         "videos.VideoMediaType": MEDIA_TYPE_MOVIE}))
-
-    def get_tv_episodes(self, media_id):
-        seasons = {}
-        for episode in self.get_videos({"columns": ["VideoID",
-                                                    "Duration",
-                                                    "Path",
-                                                    "Size",
-                                                    "Timestamp",
-                                                    "SeasonNumber",
-                                                    "EpisodeNumber",
-                                                    "EpisodeTitle",
-                                                    "EpisodeOverview",
-                                                    "Audios",
-                                                    "Subtitles"],
-                                        "TvShowID": media_id,
-                                        "VideoMediaType": MEDIA_TYPE_TV}):
-            if episode["SeasonNumber"] in seasons:
-                seasons[episode["SeasonNumber"]].append(episode)
-            else:
-                seasons[episode["SeasonNumber"]] = [episode]
-        return seasons
-
-    def get_media(self, media_id, media_type):
-        return list(self.get_medias({"ID": media_id,
-                                     "medias.MediaType": media_type,
-                                     "columns": ["ID",
-                                                 "Title",
-                                                 "MediaType",
-                                                 "PosterPath",
-                                                 "Genres",
-                                                 "OriginalTitle",
-                                                 "VoteAverage",
-                                                 "ReleaseDate",
-                                                 "BackdropPath",
-                                                 "Overview"]}))[0]
+    def set_watch_time(self, video_id, watch_time):
+        self.put(f"/mediaserver/api/video/{video_id}", json={"watch_time": watch_time})

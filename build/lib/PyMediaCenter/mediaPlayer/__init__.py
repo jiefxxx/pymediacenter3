@@ -148,6 +148,8 @@ class MediaPlayer(QWidget):
         QWidget.mouseMoveEvent(self, mouse_event)
 
 
+
+
 MediaPlayerStylesheet = """
 QLabel{
     color: white;

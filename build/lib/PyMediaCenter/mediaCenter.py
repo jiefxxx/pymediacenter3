@@ -45,7 +45,8 @@ class MainWindow(QMainWindow):
         self.setObjectName("mainWindow")
         self.setStyleSheet(MainWindowStylsheet)
 
-        self.model_manager = ModelManager(Server(pyconfig.get("server"), port=8000))
+        self.model_manager = ModelManager(Server(pyconfig.get("server"), port=3000))
+        #self.model_manager = ModelManager(Server("127.0.0.1", port=3000))
         self.model_manager.server.fatal_error.connect(self.on_fatal_error)
 
         self.setMouseTracking(True)

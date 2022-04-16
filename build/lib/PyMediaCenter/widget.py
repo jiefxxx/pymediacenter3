@@ -20,35 +20,84 @@ class WidgetSpinner(QLabel):
         self.movie.stop()
 
 
-class QIconButton(QLabel):
+class QSelectorIcon(QLabel):
     clicked = pyqtSignal()
 
-    def __init__(self, path, parent=None, width=None, height=None):
-        QLabel.__init__(self, parent)
-        self.n_pixmap = QPixmap(path[0])
-        self.p_pixmap = QPixmap(path[1])
-        self._width = width
-        self._height = height
+    def __init__(self, parent, normal, clicked, selected, size):
+        QLabel.__init__(self, parent=parent)
+        self._selected = False
+        self.n_pixmap = QPixmap(normal)
+        self.p_pixmap = QPixmap(clicked)
+        self.s_pixmap = QPixmap(selected)
+        self._current_pixmap = self.n_pixmap
+        self.size = size
 
     def _resize(self, pixmap):
-        width = self._width
-        height = self._height
-        if width is None:
-            width = self.width()
-        if height is None:
-            height = self.height()
-        return pixmap.scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        if self.size:
+            return pixmap.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        else:
+            return pixmap.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+    def set_pixmap(self, pixmap):
+        self._current_pixmap = pixmap
+        self.setPixmap(self._resize(self._current_pixmap))
+
+    def set_selected(self, b):
+        self._selected = b
+        if b:
+            self.set_pixmap(self.s_pixmap)
+        else:
+            self.set_pixmap(self.n_pixmap)
+
+    def selected(self):
+        return self._selected
 
     def resizeEvent(self, event):
-        self.setPixmap(self._resize(self.n_pixmap))
+        self.setPixmap(self._resize(self._current_pixmap))
 
     def mousePressEvent(self, ev):
-        self.setPixmap(self._resize(self.p_pixmap))
+        self.set_pixmap(self.p_pixmap)
 
     def mouseReleaseEvent(self, ev):
         self.clicked.emit()
-        self.setPixmap(self._resize(self.n_pixmap))
+        if self._selected:
+            self.set_pixmap(self.s_pixmap)
+        else:
+            self.set_pixmap(self.n_pixmap)
 
+
+class QIconButton(QLabel):
+    clicked = pyqtSignal()
+
+    def __init__(self, parent, normal, clicked, size):
+        QLabel.__init__(self, parent)
+        self.n_pixmap = QPixmap(normal)
+        self.p_pixmap = QPixmap(clicked)
+        self._current_pixmap = self.n_pixmap
+        self.size = size
+
+    def _resize(self, pixmap):
+        if self.size:
+            return pixmap.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        else:
+            return pixmap.scaled(self.width(), self.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+    def set_pixmap(self, pixmap):
+        try:
+            self._current_pixmap = pixmap
+            self.setPixmap(self._resize(self._current_pixmap))
+        except RuntimeError:
+            pass
+
+    def resizeEvent(self, event):
+        self.setPixmap(self._resize(self._current_pixmap))
+
+    def mousePressEvent(self, ev):
+        self.set_pixmap(self.p_pixmap)
+
+    def mouseReleaseEvent(self, ev):
+        self.clicked.emit()
+        self.set_pixmap(self.n_pixmap)
 
 
 class QJumpSlider(QSlider):

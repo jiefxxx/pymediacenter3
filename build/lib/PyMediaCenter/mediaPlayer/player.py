@@ -86,9 +86,7 @@ class Player(QFrame):
 
     def update_timestamp(self):
         if self.state == PLAYER_STATE_PLAYING:
-            self.playlist[self.current]["Timestamp"] = int(self.media_player.get_time())
-            self.model_manager.update_timestamp(self.playlist[self.current]["VideoID"],
-                                                self.playlist[self.current]["Timestamp"])
+            self.model_manager.server.set_watch_time(self.playlist[self.current]["id"], int(self.media_player.get_time()))
 
     def update_position(self):
         if self.state == PLAYER_STATE_PLAYING:
@@ -148,10 +146,9 @@ class Player(QFrame):
         self.load()
 
     def load(self):
-        media = self.instance.media_new(self.playlist[self.current]["Filename"])
+        media = self.instance.media_new(self.playlist[self.current]["stream_path"])
         self.media_player.set_media(media)
-
-        self.media_changed.emit(self.playlist[self.current])
+        self.media_changed.emit(self.playlist[self.current]["info"])
         self.play(True)
 
         while not self.media_player.is_playing():   # wait to get data
@@ -161,7 +158,7 @@ class Player(QFrame):
             if track[1].decode().split("[")[-1][:-1] == "Français":
                 self.media_player.audio_set_track(track[0])
 
-        timestamp = self.playlist[self.current]["Timestamp"]
+        timestamp = self.playlist[self.current]["watch_time"]
         if timestamp is not None and timestamp < (self.media_player.get_length()*0.9):  # set timestamp
             self.media_player.set_time(timestamp)
 

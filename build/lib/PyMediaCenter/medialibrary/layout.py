@@ -2,14 +2,35 @@ from PyQt5.QtCore import QSize
 
 from PyMediaCenter.layout import BaseLayout
 
+
+class TopMenuLayout(BaseLayout):
+    def __init__(self, poster, menu):
+        BaseLayout.__init__(self)
+        self.poster = poster
+        self.menu = menu
+
+        self.addWidget(self.poster)
+        self.addWidget(self.menu)
+
+    def setGeometry(self, top_rec):
+
+        self.poster.setGeometry(top_rec.x(), top_rec.y(), top_rec.width(), top_rec.height())
+        size = self.menu.sizeHint()
+        print(size.width(), size.height())
+        self.menu.setGeometry(0, (top_rec.height() / 2) - (size.height() / 2), top_rec.width(), size.height())
+        self.poster.stackUnder(self.menu)
+
+    def sizeHint(self):
+        return QSize(640, 480)
+
+
 class MediaLibraryLayout(BaseLayout):
-    def __init__(self, media_list, nav, process_label, parent=None):
+    def __init__(self, media_list, process_label, video_chooser, parent=None):
         BaseLayout.__init__(self, parent)
         self.media_list = media_list
-        self.nav = nav
         self.process_label = process_label
+        self.video_chooser = video_chooser
         self.addWidget(self.media_list)
-        self.addWidget(self.nav)
         self.addWidget(self.process_label)
 
         self.test = True
@@ -22,14 +43,28 @@ class MediaLibraryLayout(BaseLayout):
         return QSize(640, 480)
 
     def setGeometry(self, top_rec):
-        nav_width = top_rec.width() * 1 / 15
-        if nav_width < 100:
-            nav_width = 100
-        self.process_label.setGeometry(((top_rec.width() - nav_width) / 2) - 64 + nav_width,
-                                       (top_rec.height()/2)-64, 128, 128)
-        self.nav.setGeometry(0, 0, nav_width, top_rec.height())
-        self.media_list.setGeometry(nav_width, 0, top_rec.width()-nav_width, top_rec.height())
-        self.media_list.stackUnder(self.process_label)
+        self.process_label.setGeometry((top_rec.width()/2)-64, (top_rec.height()/2)-64, 128, 128)
+
+        size = self.video_chooser.sizeHint()
+        self.video_chooser.setGeometry(0, (top_rec.height()/2)-(size.height()/2), top_rec.width(), size.height())
+
+        self.media_list.setGeometry(0, 0, top_rec.width(), top_rec.height())
+
+        self.media_list.stackUnder(self.video_chooser)
+        self.video_chooser.stackUnder(self.process_label)
+
+
+class SimpleListLayout(BaseLayout):
+    def __init__(self, parent, poster_list):
+        BaseLayout.__init__(self, parent)
+        self.poster_list = poster_list
+
+    def sizeHint(self):
+        return QSize(640, 480)
+
+    def setGeometry(self, top_rec):
+        size = self.poster_list.sizeHint()
+        self.poster_list.setGeometry(top_rec.x(), top_rec.y(), top_rec.width(), top_rec.height())
 
 
 class MediaListLayout(BaseLayout):
