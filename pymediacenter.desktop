@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Python Media Center
+Comment=Simple Python Media Center for GoMediaServer
+Exec=pymediacenter
+Icon=pymediacenter.png
+Terminal=false
