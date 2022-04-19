@@ -126,6 +126,9 @@ class MediaLibrary(QWidget):
 MediaLibraryStylesheet = """
 QFrame, QWidget{
     background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
 }
 
 MovieView, PersonView, TvView, SeasonView{
@@ -136,9 +139,6 @@ MovieView, PersonView, TvView, SeasonView{
 HomeView, ListWidget, SearchView, MovieListView, TvListView{
     background-color: rgb(64, 64, 64);
     color: white;
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
 }
 
 VideoChooser, MenuList{
@@ -151,9 +151,6 @@ PosterListView, HListView, EpisodeTvView{
     background-color: transparent;
     color: white;
     font-size: 18pt;
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
 }
 
 PosterListView::item:selected:active, HListView::item:selected:active{

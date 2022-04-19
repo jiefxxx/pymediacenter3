@@ -320,7 +320,7 @@ class EpisodeModel(ModelTableListDict):
 
     def get_decoration_role(self, index):
         if index.column() == 0:
-            if self.list[index.row()]["watched"] == 1:
+            if self.list[index.row()]["watched"] > 0:
                 pixmap = QPixmap(":/rsc/see-full.png")
             else:
                 pixmap = QPixmap(":/rsc/see-empty.png")
