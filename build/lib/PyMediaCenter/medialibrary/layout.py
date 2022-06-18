@@ -43,10 +43,10 @@ class MediaLibraryLayout(BaseLayout):
         return QSize(640, 480)
 
     def setGeometry(self, top_rec):
-        self.process_label.setGeometry((top_rec.width()/2)-64, (top_rec.height()/2)-64, 128, 128)
+        self.process_label.setGeometry(int(top_rec.width()/2)-64, int(top_rec.height()/2)-64, 128, 128)
 
         size = self.video_chooser.sizeHint()
-        self.video_chooser.setGeometry(0, (top_rec.height()/2)-(size.height()/2), top_rec.width(), size.height())
+        self.video_chooser.setGeometry(0, int((top_rec.height()/2)-(size.height()/2)), top_rec.width(), size.height())
 
         self.media_list.setGeometry(0, 0, top_rec.width(), top_rec.height())
 

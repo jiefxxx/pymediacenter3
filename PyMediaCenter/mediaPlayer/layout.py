@@ -42,21 +42,21 @@ class PlayerLayout(BaseLayout):
         return QSize(640, 480)
 
     def setGeometry(self, top_rec):
-        controllers_height = top_rec.height() / 100 * 7
+        controllers_height = int(top_rec.height() / 100 * 7)
         if controllers_height < 40:
             controllers_height = 40
 
-        controllers_width = top_rec.width() / 3
+        controllers_width = int(top_rec.width() / 3)
 
         if self.player:
             self.player.setGeometry(0, 0, top_rec.width(), top_rec.height())
 
         if self.bottom_controller:
-            self.bottom_controller.setGeometry(QRect(0, top_rec.height()-controllers_height,
-                                                     top_rec.width(), controllers_height))
+            self.bottom_controller.setGeometry(0, int(top_rec.height()-controllers_height),
+                                               top_rec.width(), int(controllers_height))
 
         if self.top_controller:
-            self.top_controller.setGeometry(QRect(0, 0, top_rec.width(), controllers_height))
+            self.top_controller.setGeometry(0, 0, top_rec.width(), controllers_height)
 
         maxh = top_rec.height() - 2*(controllers_height + 10)
         for i in range(0, len(self.center_controller)):

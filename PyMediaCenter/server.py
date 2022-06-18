@@ -133,7 +133,7 @@ class Server(QObject):
         return self.get_json(f"/mediaserver/api/tv/{tv_id}/season/{season}/episode/{episode}")
 
     def get_person(self, person_id):
-        return  self.get_json(f"/mediaserver/api/person/{person_id}")
+        return self.get_json(f"/mediaserver/api/person/{person_id}")
 
     def get_video(self, video_id):
         return self.get_json(f"/mediaserver/api/video/{video_id}")
@@ -158,4 +158,5 @@ class Server(QObject):
         return None
 
     def set_watch_time(self, video_id, watch_time):
-        self.put(f"/mediaserver/api/video/{video_id}", json={"watch_time": watch_time})
+        #print("test", video_id, watch_time)
+        self.put(f"/mediaserver/api/video/{str(video_id)}", json={"watch_time": int(watch_time)})

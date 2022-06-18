@@ -64,7 +64,7 @@ class BottomControllers(QFrame):
             self.slider.valueChanged.disconnect(self.on_slider_changed)
         except TypeError:
             pass
-        self.slider.setValue(info["position"] * 1000)
+        self.slider.setValue(int(info["position"] * 1000))
         self.slider.valueChanged.connect(self.on_slider_changed)
         self.set_timing(info["current_time"], info["total_time"])
 

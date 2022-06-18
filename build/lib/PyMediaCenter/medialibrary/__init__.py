@@ -126,6 +126,9 @@ class MediaLibrary(QWidget):
 MediaLibraryStylesheet = """
 QFrame, QWidget{
     background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
 }
 
 MovieView, PersonView, TvView, SeasonView{

@@ -47,7 +47,8 @@ class Player(QFrame):
         self.media_player.video_set_key_input(0)
 
         if sys.platform.startswith('linux'):  # for Linux using the X Server
-            self.media_player.set_xwindow(self.winId())
+            print(self.winId())
+            self.media_player.set_xwindow(int(self.winId()))
         elif sys.platform == "win32":  # for Windows
             self.media_player.set_hwnd(self.winId())
 
@@ -61,12 +62,12 @@ class Player(QFrame):
         self.state = PLAYER_STATE_IDLE
         self.state_changed.emit(PLAYER_STATE_IDLE)
 
-        self.timer_timestamp = QTimer(self)
-        self.timer_timestamp.setInterval(3 * 60 * 1000)
+        self.timer_timestamp = QTimer()
+        self.timer_timestamp.setInterval(10 * 1000)
         self.timer_timestamp.timeout.connect(self.update_timestamp)
         self.timer_timestamp.start()
 
-        self.timer_position = QTimer(self)
+        self.timer_position = QTimer()
         self.timer_position.setInterval(1000)
         self.timer_position.timeout.connect(self.update_position)
         self.timer_position.start()
@@ -86,7 +87,8 @@ class Player(QFrame):
 
     def update_timestamp(self):
         if self.state == PLAYER_STATE_PLAYING:
-            self.model_manager.server.set_watch_time(self.playlist[self.current]["id"], int(self.media_player.get_time()))
+            self.model_manager.server.set_watch_time(str(self.playlist[self.current]["id"]),
+                                                     int(self.media_player.get_time()))
 
     def update_position(self):
         if self.state == PLAYER_STATE_PLAYING:

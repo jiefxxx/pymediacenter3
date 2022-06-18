@@ -88,10 +88,12 @@ class ModelManager(QObject):
 
     @threaded("httpCom")
     def refresh_media(self):
+        self.busy.emit(True)
         self.refresh_movies()
         self.refresh_tvs()
-        self.refresh_persons()
+        #self.refresh_persons()
         #self.download_poster()
+        self.busy.emit(False)
 
     def download_poster(self):
         self.busy.emit(True)
@@ -107,7 +109,6 @@ class ModelManager(QObject):
         self.busy.emit(False)
 
     def refresh_movies(self):
-        #self.busy.emit(True)
         data = []
         for movie in self.server.get_movies():
             movie["type"] = "movie"
@@ -127,7 +128,11 @@ class ModelManager(QObject):
     def refresh_persons(self):
         #self.busy.emit(True)
         data = []
-        for person in self.server.get_persons():
+        data = self.server.get_persons()
+        if data is None:
+            return self.refresh_persons()
+        data = list(data)
+        for person in data:
             person["type"] = "person"
             data.append(person)
         self.person_model.reset_data(data)

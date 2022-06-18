@@ -4,11 +4,11 @@ import threading
 import types
 
 
-class Event(asyncio.Event):
-    # TODO: clear() method
-    def set(self):
-        # FIXME: The _loop attribute is not documented as public api!
-        self._loop.call_soon_threadsafe(super().set)
+#class Event(asyncio.Event):
+#    # TODO: clear() method
+#    def set(self):
+#        # FIXME: The _loop attribute is not documented as public api!
+#        self._loop.call_soon_threadsafe(super().set)
 
 
 class ThreadReturn:
@@ -16,10 +16,10 @@ class ThreadReturn:
         self.value = None
         self.error = None
         self.completeEvent = threading.Condition()
-        try:
-            self.asyncEvent = Event()
-        except RuntimeError:
-            self.asyncEvent = None
+        #try:
+        #    self.asyncEvent = Event()
+        #except RuntimeError:
+        self.asyncEvent = None
         self.completed = False
         self.gen_queue = queue.Queue()
         self.gen = False

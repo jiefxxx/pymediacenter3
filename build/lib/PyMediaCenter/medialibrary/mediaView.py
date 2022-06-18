@@ -129,7 +129,7 @@ class PosterView(QLabel):
         if pixmap is None:
             pixmap = QPixmap(":/rsc/404.jpg")
         rect = QApplication.desktop().screenGeometry()
-        pixmap = pixmap.scaledToWidth(rect.width()/6, mode=Qt.SmoothTransformation)
+        pixmap = pixmap.scaledToWidth(int(rect.width()/6), mode=Qt.SmoothTransformation)
         self.setPixmap(pixmap)
 
     def keyReleaseEvent(self, event):
