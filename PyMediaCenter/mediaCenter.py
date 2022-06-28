@@ -18,7 +18,7 @@ import PyMediaCenter.resources
 
 def configure_callback():
 
-    pyconfig.create("server", default="192.168.1.62")
+    pyconfig.create("server", default="192.168.1.60")
     pyconfig.create("language", default="fr_be")
     pyconfig.create("tmdb.api_key", default='bd00b4d04b286b876c3455692a531120')
     pyconfig.create("rsc.poster", default=pyconfig.get_dir("poster"))
@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self.setObjectName("mainWindow")
         self.setStyleSheet(MainWindowStylsheet)
 
-        self.model_manager = ModelManager(Server(pyconfig.get("server"), port=3000))
+        self.model_manager = ModelManager(Server(pyconfig.get("server"), port=80))
         #self.model_manager = ModelManager(Server("127.0.0.1", port=3000))
         self.model_manager.server.fatal_error.connect(self.on_fatal_error)
 
