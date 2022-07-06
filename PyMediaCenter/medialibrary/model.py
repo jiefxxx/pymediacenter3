@@ -285,7 +285,7 @@ class ModelManager(QObject):
             "watch_time": video["watch_time"],
             "info": f"{media['tv_title']} S{media['season_number']:02d}E{media['episode_number']:02d} - {media['title']}"
         })
-        while len(ret) < 15:
+        while len(ret) < 1:
             media = self.server.get_episode(media['tv_id'], media['season_number'], media['episode_number']+1)
             if media is None:
                 break
